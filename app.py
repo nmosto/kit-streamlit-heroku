@@ -4,7 +4,6 @@ import io
 import sys
 
 import streamlit as st
-from PIL import Image
 import pandas as pd
 import numpy as np
 import pickle
@@ -16,23 +15,9 @@ import collections
 from collections import defaultdict
 import operator
 from skimage.io import imread, imshow
-from PIL import Image as IMG
-
-import numpy as np
-from PIL import Image as IMG
-import cv2
-from skimage.io import imread, imshow
-from scipy.stats import itemfreq
-
-import os
-import numpy as np
-from PIL import Image as IMG
-
-import numpy as np
-from PIL import Image as IMG
 from skimage import feature
-
-
+from PIL import Image as IMG
+from scipy.stats import itemfreq
 
 # Import Functions for Image Features
 from brightness_dullness import color_analysis
@@ -50,11 +35,11 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 st.markdown("<h1 style='text-align: center; color: black;'>Kick-Into-Traction</h1>", unsafe_allow_html=True)
 st.write('### First impressions make a difference.')
 st.write('')
-st.write('### Especially on the crowdfunding platform: Kickstarter.com')
+st.write('### Crowdfunding campaigns can fail due to using poor images.')
 st.write('')
 st.write('Kick-Into-Traction is here to help your campaign get momentum quickly by focusing on what people see first: **The Cover Photo**')
 st.write('')
-st.write('Submit your best cover photo below to get a prediction of how much traction your campaign will get on Kickstarter.com and get image optimization suggestions from our machine learning models.')
+st.write('### Have your cover photo analyzed for red flags.')
 
 # Image uploader
 uploaded_file = st.file_uploader("Submit Your Campaign Cover Image Here:")
@@ -69,7 +54,7 @@ uploaded_file = st.file_uploader("Submit Your Campaign Cover Image Here:")
 # Code to execute once file is uploaded
 if uploaded_file is not None:
 
-    image = Image.open(uploaded_file)
+    image = IMG.open(uploaded_file)
     saved_img = image.save('saved_img.jpeg')
     st.image(image, caption='Uploading Successful.', use_column_width=True)
     st.write("")
@@ -132,27 +117,47 @@ if uploaded_file is not None:
     features3 = pd.DataFrame(data3, index=[0])
     st.dataframe(features3)
 
+    #
+    keys = ['dullness','brightness','uniformity','average_red','average_green',
+                     'average_blue','dominant_red','dominant_green','dominant_blue','blurriness',
+                     'compression_size']
+
+    values = np.array([dullness, brightness, uniformity, ave_red, ave_green, ave_blue,
+                             dom_red, dom_green, dom_blue, blurriness,
+                             compression_size])
+
+    dictionary = dict(zip(keys,values))
+
+
+
+    # Import model
+    modelname = 'kit_RFM_10_20_20.pkl'
+    model = joblib.load(modelname)
+    inp_data = values.reshape(1,-1)
+    pred = model.predict(inp_data)
     st.write('')
-    st.write('### Our machine learning models predict that your campaign cover image will **NOT** make a good impression.')
-    st.write('### What can you do?')
+    if pred == 0:
+
+        st.write('### Our machine learning models predict that your campaign cover image will **NOT** make a good impression.')
+    else:
+        st.write('### Our machine learning models predict that your campaign cover image is sufficiently high in quality to make a good impression, but there is always room for improvement.')
+
+
+
+    st.write('')
+    st.write('## What can you do to improve?')
     st.write('1.) The **2** most significant features are: Compression Size and Uniformity.')
     st.write('2.) Look at how past successful campgain images stack up in comparison to yours!')
     st.write('3.) If your image scores differently, consider post-processing improvements to augment the key features.')
+    # Suggestions
+    st.write('## Suggesions for Improving your Image')
+    st.write('')
     #log_reg = 'logreg_10_2_20.pkl'
     #pipe = joblib.load(log_reg)
 
 
 
 
-    keys = ['dullness','brightness','uniformity','average_red','average_green',
-                     'average_blue','dominant_red','dominant_green','dominant_blue','compression_size',
-                     'blurriness']
-
-    values = np.array([dullness, brightness, uniformity, ave_red, ave_green, ave_blue,
-                             dom_red, dom_green, dom_blue, compression_size,
-                             blurriness])
-
-    dictionary = dict(zip(keys,values))
 
     # Import training data for recommnedation figures
     features_table = 'final_features_df1.pkl'
