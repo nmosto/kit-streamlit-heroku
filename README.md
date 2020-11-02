@@ -1,8 +1,8 @@
 # Kick-Into-Traction
 
-This is the heroku deployment of Kick-Into-traction (KIT). For modelling repository please check: https://github.com/nmosto/kick-into-traction
+This is the heroku deployment of Kick-Into-Traction (KIT). For modelling repository please check: https://github.com/nmosto/kick-into-traction
 
-Kick-Into-traction (KIT) is a web app that makes recommendations to users of Kickstarter's crowdsourcing platform on how to improve the likelihood of a campaign's success by optimizing features related to the images of a campaign.
+Kick-Into-Traction (KIT) is a web app that makes recommendations to users of Kickstarter's crowdsourcing platform on how to improve the likelihood of a campaign's success by optimizing features related to the images of a campaign.
 
 KIT has analyzed tens of thousands of Kickstarter campaigns to try and uncover what image features differentiate successful campaigs from the unsuccessful ones. 
 
